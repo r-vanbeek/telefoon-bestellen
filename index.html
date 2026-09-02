@@ -1,33 +1,220 @@
 <!DOCTYPE html>
-<html>
+<html lang="nl">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Telefoon bestellen</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 25px;
+        }
+
+        h1 {
+            color: #0078d4;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 25px;
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #106ebe;
+        }
+
+        .success {
+            display: none;
+            color: green;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .error {
+            display: none;
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+
 </head>
 <body>
 
-<h1>Telefoon bestellen</h1>
+<div class="card">
 
-<form id="frm">
+    <h1>Kies uw telefoon</h1>
 
-    <input type="hidden" id="token">
-    <input type="hidden" id="ticket">
+    <p>
+        Vul onderstaande gegevens in om uw bestelling af te ronden.
+    </p>
 
-    <label>Telefoon</label><br>
-    <select id="telefoon">
-        <option>iPhone 16 128GB</option>
-        <option>iPhone 16 256GB</option>
-        <option>Samsung S26 128GB</option>
-    </select>
+    <form id="orderForm">
 
-    <br><br>
+        <label for="telefoon">
+            Telefoon
+        </label>
 
-    <label>Afleveradres</label><br>
-    <textarea id="adres"></textarea>
+        <select id="telefoon" required>
+            <option value="">Selecteer een toestel</option>
+            <option>iPhone 16 128GB</option>
+            <option>iPhone 16 256GB</option>
+            <option>Samsung Galaxy S26 128GB</option>
+            <option>Samsung Galaxy S26 256GB</option>
+        </select>
 
-    <br><br>
+        <label for="straat">
+            Straat + huisnummer
+        </label>
 
-    <button type="submit">Bestellen</button>
+        <input
+            id="straat"
+            type="text"
+            required>
 
-</form>
+        <label for="postcode">
+            Postcode
+        </label>
 
-<script src="script.js"></</html>
+        <input
+            id="postcode"
+            type="text"
+            required>
+
+        <label for="plaats">
+            Plaats
+        </label>
+
+        <input
+            id="plaats"
+            type="text"
+            required>
+
+        <label for="opmerking">
+            Opmerking (optioneel)
+        </label>
+
+        <textarea
+            id="opmerking"
+            rows="4">
+        </textarea>
+
+        <button type="submit">
+            Bestelling verzenden
+        </button>
+
+    </form>
+
+    <div id="success" class="success">
+        Uw bestelling is succesvol ontvangen.
+    </div>
+
+    <div id="error" class="error">
+        Er is een fout opgetreden.
+    </div>
+
+</div>
+
+<script>
+
+const token =
+    new URLSearchParams(window.location.search)
+        .get("token");
+
+document.getElementById("orderForm")
+    .addEventListener("submit", async function (e) {
+
+        e.preventDefault();
+
+        const payload = {
+
+            token: token,
+
+            telefoon:
+                document.getElementById("telefoon").value,
+
+            straat:
+                document.getElementById("straat").value,
+
+            postcode:
+                document.getElementById("postcode").value,
+
+            plaats:
+                document.getElementById("plaats").value,
+
+            opmerking:
+                document.getElementById("opmerking").value
+
+        };
+
+        try {
+
+            const response = await fetch(
+                "HIER_JOUW_POWER_AUTOMATE_HTTP_TRIGGER_URL",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                }
+            );
+
+            if (response.ok) {
+
+                document.getElementById("orderForm").style.display = "none";
+
+                document.getElementById("success").style.display = "block";
+
+            }
+            else {
+
+                document.getElementById("error").style.display = "block";
+
+            }
+
+        }
+        catch (err) {
+
+            console.error(err);
+
+            document.getElementById("error").style.display = "block";
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
